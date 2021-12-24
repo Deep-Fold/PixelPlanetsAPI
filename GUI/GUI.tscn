@@ -1,0 +1,805 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://GUI/GUI.gd" type="Script" id=1]
+[ext_resource path="res://GUI/Theme.tres" type="Theme" id=2]
+[ext_resource path="res://Planets/Rivers/Rivers.tscn" type="PackedScene" id=3]
+[ext_resource path="res://stars.png" type="Texture" id=4]
+[ext_resource path="res://GUI/SpritesheetPopup.gd" type="Script" id=5]
+[ext_resource path="res://GUI/progress-under.png" type="Texture" id=6]
+[ext_resource path="res://GUI/progress-over.png" type="Texture" id=7]
+[ext_resource path="res://GUI/ColorPickerButton.tscn" type="PackedScene" id=8]
+[ext_resource path="res://GUI/StarParticles.tres" type="Material" id=9]
+[ext_resource path="res://GUI/GifPopup.gd" type="Script" id=10]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec2 offset = vec2(0.0);
+
+
+float rand(vec2 coord) {
+	return fract(sin(dot(coord.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+vec2 rotate(vec2 coord, float angle){
+	coord -= 0.5;
+	coord *= mat2(vec2(cos(angle),-sin(angle)),vec2(sin(angle),cos(angle)));
+	return coord + 0.5;
+}
+
+void fragment() {
+	vec2 uv = rotate(UV, TIME * 0.2);
+
+	vec4 col = vec4(1.0) + rand(UV + vec2(TIME*0.0000001,0.0)) * 0.03;
+	
+	col = col* vec4(
+		abs(sin(uv.x * cos(offset.x)+ TIME * 0.105)),
+		abs(sin((cos(uv.x + uv.y) + cos(offset.x + offset.y) + TIME * 0.059))) ,
+		abs(cos(uv.y * sin(offset.y) + TIME * 0.0253)) ,
+		1.0);
+
+	COLOR = col;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/offset = Vector2( 0, 0 )
+
+[sub_resource type="CanvasItemMaterial" id=3]
+particles_animation = true
+particles_anim_h_frames = 11
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ViewportTexture" id=7]
+viewport_path = NodePath("PlanetViewport")
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform float abberation: hint_range(-0.1, 0.1);
+
+
+void fragment () {
+	vec4 color = vec4(1.0);
+
+
+
+
+	color.r = texture(SCREEN_TEXTURE, SCREEN_UV - vec2(abberation,0.0)).r;
+	color.g = texture(SCREEN_TEXTURE, SCREEN_UV).g;
+	color.b = texture(SCREEN_TEXTURE, SCREEN_UV + vec2(abberation,0.0)).b;
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
+shader_param/abberation = 0.001
+
+[node name="GUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Light" type="ColorRect" parent="."]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dark" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.878431 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Particles2D" type="Particles2D" parent="."]
+modulate = Color( 1, 1, 1, 0.513726 )
+material = SubResource( 3 )
+position = Vector2( 256, 150 )
+amount = 50
+lifetime = 50.0
+preprocess = 50.0
+process_material = ExtResource( 9 )
+texture = ExtResource( 4 )
+
+[node name="PlanetViewport" type="Viewport" parent="."]
+size = Vector2( 200, 200 )
+transparent_bg = true
+usage = 1
+render_target_v_flip = true
+
+[node name="PlanetHolder" type="Control" parent="PlanetViewport"]
+
+[node name="Control" parent="PlanetViewport/PlanetHolder" instance=ExtResource( 3 )]
+
+[node name="PlanetHolder2" type="CenterContainer" parent="."]
+margin_left = 100.0
+margin_top = 100.0
+margin_right = 250.0
+margin_bottom = 250.0
+rect_scale = Vector2( 2, 2 )
+rect_pivot_offset = Vector2( 100, 100 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlanetHolder" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -212.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportTexture" type="TextureRect" parent="PlanetHolder"]
+margin_right = 300.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = SubResource( 7 )
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Settings" type="Control" parent="."]
+margin_left = 300.0
+margin_right = 512.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 5.0
+margin_right = -1.99998
+custom_constants/separation = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label5" type="Label" parent="Settings/VBoxContainer"]
+margin_right = 210.0
+margin_bottom = 16.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "Planet type:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OptionButton" type="OptionButton" parent="Settings/VBoxContainer"]
+margin_top = 17.0
+margin_right = 210.0
+margin_bottom = 33.0
+focus_mode = 0
+theme = ExtResource( 2 )
+shortcut_in_tooltip = false
+enabled_focus_mode = 0
+text = "Terran Wet"
+
+[node name="Control2" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 34.0
+margin_right = 210.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label" type="Label" parent="Settings/VBoxContainer"]
+margin_top = 40.0
+margin_right = 210.0
+margin_bottom = 56.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "seed:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Seed" type="HBoxContainer" parent="Settings/VBoxContainer"]
+margin_top = 57.0
+margin_right = 210.0
+margin_bottom = 74.0
+custom_constants/separation = 0
+
+[node name="SeedText" type="LineEdit" parent="Settings/VBoxContainer/Seed"]
+margin_right = 152.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "0"
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="Settings/VBoxContainer/Seed"]
+margin_left = 152.0
+margin_right = 210.0
+margin_bottom = 17.0
+theme = ExtResource( 2 )
+text = "rand"
+
+[node name="Control" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 75.0
+margin_right = 210.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label3" type="Label" parent="Settings/VBoxContainer"]
+margin_top = 81.0
+margin_right = 210.0
+margin_bottom = 97.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "pixels: "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SliderPixels" type="HSlider" parent="Settings/VBoxContainer"]
+visible = false
+margin_top = 98.0
+margin_right = 210.0
+margin_bottom = 114.0
+theme = ExtResource( 2 )
+min_value = 16.0
+value = 100.0
+
+[node name="InputPixels" type="LineEdit" parent="Settings/VBoxContainer"]
+margin_top = 98.0
+margin_right = 210.0
+margin_bottom = 115.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "100"
+caret_blink = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control4" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 116.0
+margin_right = 210.0
+margin_bottom = 121.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label4" type="Label" parent="Settings/VBoxContainer"]
+margin_top = 122.0
+margin_right = 210.0
+margin_bottom = 138.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "Rotation:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SliderRotation" type="HSlider" parent="Settings/VBoxContainer"]
+margin_top = 139.0
+margin_right = 210.0
+margin_bottom = 155.0
+theme = ExtResource( 2 )
+max_value = 6.28
+step = 0.01
+value = 6.28
+
+[node name="Control6" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 156.0
+margin_right = 210.0
+margin_bottom = 161.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Settings/VBoxContainer"]
+margin_top = 162.0
+margin_right = 210.0
+margin_bottom = 178.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label8" type="Label" parent="Settings/VBoxContainer/HBoxContainer2"]
+margin_right = 148.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "DITHER:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShouldDither" type="Button" parent="Settings/VBoxContainer/HBoxContainer2"]
+margin_left = 152.0
+margin_right = 210.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 58, 0 )
+theme = ExtResource( 2 )
+text = "on"
+
+[node name="Control3" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 179.0
+margin_right = 210.0
+margin_bottom = 184.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label7" type="Label" parent="Settings/VBoxContainer"]
+margin_top = 185.0
+margin_right = 210.0
+margin_bottom = 201.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "Colors:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Settings/VBoxContainer"]
+margin_top = 202.0
+margin_right = 210.0
+margin_bottom = 218.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RandomizeColors" type="Button" parent="Settings/VBoxContainer/HBoxContainer"]
+margin_right = 103.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+custom_constants/hseparation = 2
+text = "random"
+
+[node name="ResetColors" type="Button" parent="Settings/VBoxContainer/HBoxContainer"]
+margin_left = 107.0
+margin_right = 210.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "reset"
+
+[node name="ColorButtonHolder" type="HBoxContainer" parent="Settings/VBoxContainer"]
+margin_top = 219.0
+margin_right = 210.0
+margin_bottom = 237.0
+size_flags_horizontal = 3
+custom_constants/separation = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorPickerButton" parent="Settings/VBoxContainer/ColorButtonHolder" instance=ExtResource( 8 )]
+margin_right = 210.0
+margin_bottom = 18.0
+rect_scale = Vector2( 1, 1 )
+
+[node name="Control5" type="Control" parent="Settings/VBoxContainer"]
+margin_top = 238.0
+margin_right = 210.0
+margin_bottom = 243.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label6" type="Label" parent="Settings/VBoxContainer"]
+margin_top = 244.0
+margin_right = 210.0
+margin_bottom = 260.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0.811765, 0.811765, 0.811765, 1 )
+text = "Export:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExportPNG" type="Button" parent="Settings/VBoxContainer"]
+margin_top = 261.0
+margin_right = 210.0
+margin_bottom = 277.0
+theme = ExtResource( 2 )
+text = "png"
+
+[node name="ExportGIF" type="Button" parent="Settings/VBoxContainer"]
+margin_top = 278.0
+margin_right = 210.0
+margin_bottom = 294.0
+theme = ExtResource( 2 )
+text = "GIF"
+
+[node name="ExportSpriteSheet" type="Button" parent="Settings/VBoxContainer"]
+margin_top = 295.0
+margin_right = 210.0
+margin_bottom = 311.0
+theme = ExtResource( 2 )
+text = "spritesheet"
+
+[node name="Abberation" type="ColorRect" parent="."]
+material = SubResource( 6 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+margin_right = 300.0
+margin_bottom = 300.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Popup" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.172549, 0.207843, 0.301961, 0.596078 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PopupFront" type="ColorRect" parent="Popup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 30.0
+margin_top = 30.0
+margin_right = -30.0
+margin_bottom = -30.0
+color = Color( 0.172549, 0.207843, 0.301961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Popup/PopupFront"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpritesheetSettings" type="HBoxContainer" parent="Popup/PopupFront/VBoxContainer"]
+margin_right = 432.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings"]
+margin_right = 214.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_right = 214.0
+margin_bottom = 16.0
+theme = ExtResource( 2 )
+text = "frames (width)"
+
+[node name="WidthFrames" type="SpinBox" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 20.0
+margin_right = 214.0
+margin_bottom = 37.0
+theme = ExtResource( 2 )
+max_value = 1000.0
+value = 50.0
+rounded = true
+
+[node name="Label2" type="Label" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 41.0
+margin_right = 214.0
+margin_bottom = 57.0
+theme = ExtResource( 2 )
+text = "frames (height)"
+
+[node name="HeightFrames" type="SpinBox" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 61.0
+margin_right = 214.0
+margin_bottom = 78.0
+theme = ExtResource( 2 )
+max_value = 1000.0
+value = 1.0
+
+[node name="Control" type="Control" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 82.0
+margin_right = 214.0
+margin_bottom = 112.0
+rect_min_size = Vector2( 0, 30 )
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings"]
+margin_left = 218.0
+margin_right = 432.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+
+[node name="FrameInfo" type="Label" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer2"]
+margin_right = 214.0
+margin_bottom = 16.0
+theme = ExtResource( 2 )
+text = "Total Frames: 50"
+
+[node name="ResolutionInfo" type="Label" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer2"]
+margin_top = 20.0
+margin_right = 214.0
+margin_bottom = 55.0
+theme = ExtResource( 2 )
+text = "Image resolution:
+5000x100"
+
+[node name="WarningResolution" type="Label" parent="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer2"]
+visible = false
+margin_top = 62.0
+margin_right = 238.0
+margin_bottom = 119.0
+theme = ExtResource( 2 )
+text = "Image Width/Height cannot exceed 16384 pixels."
+autowrap = true
+
+[node name="TextureProgress" type="TextureProgress" parent="Popup/PopupFront/VBoxContainer"]
+visible = false
+margin_top = 183.0
+margin_right = 432.0
+margin_bottom = 199.0
+rect_min_size = Vector2( 0, 16 )
+size_flags_horizontal = 3
+texture_under = ExtResource( 6 )
+texture_progress = ExtResource( 7 )
+nine_patch_stretch = true
+stretch_margin_left = 4
+stretch_margin_top = 4
+stretch_margin_right = 4
+stretch_margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Popup/PopupFront/VBoxContainer"]
+margin_top = 204.0
+margin_right = 432.0
+margin_bottom = 220.0
+
+[node name="CancelButton" type="Button" parent="Popup/PopupFront/VBoxContainer/HBoxContainer"]
+margin_right = 214.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "cancel"
+
+[node name="ExportButton" type="Button" parent="Popup/PopupFront/VBoxContainer/HBoxContainer"]
+margin_left = 218.0
+margin_right = 432.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "export"
+
+[node name="GifPopup" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.172549, 0.207843, 0.301961, 0.596078 )
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PopupFront" type="ColorRect" parent="GifPopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 30.0
+margin_top = 30.0
+margin_right = -30.0
+margin_bottom = -30.0
+color = Color( 0.172549, 0.207843, 0.301961, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GifPopup/PopupFront"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpritesheetSettings" type="HBoxContainer" parent="GifPopup/PopupFront/VBoxContainer"]
+margin_right = 432.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings"]
+margin_right = 432.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_right = 432.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "frames"
+
+[node name="GifFrameCount" type="SpinBox" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 20.0
+margin_right = 432.0
+margin_bottom = 37.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+max_value = 1000.0
+value = 60.0
+rounded = true
+
+[node name="Label2" type="Label" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 41.0
+margin_right = 432.0
+margin_bottom = 57.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "Length (Seconds)"
+
+[node name="GifTime" type="SpinBox" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 61.0
+margin_right = 432.0
+margin_bottom = 78.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+max_value = 1000.0
+step = 0.1
+value = 10.0
+
+[node name="Label3" type="Label" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 82.0
+margin_right = 432.0
+margin_bottom = 98.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "Frame Delay (Seconds)"
+autowrap = true
+
+[node name="FrameDelay" type="SpinBox" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+margin_top = 102.0
+margin_right = 432.0
+margin_bottom = 119.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+max_value = 10.0
+step = 0.001
+value = 0.167
+
+[node name="Control" type="Control" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer"]
+visible = false
+margin_top = 102.0
+margin_right = 269.0
+margin_bottom = 132.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings"]
+visible = false
+margin_left = 218.0
+margin_right = 432.0
+margin_bottom = 180.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer2"]
+margin_right = 214.0
+margin_bottom = 35.0
+theme = ExtResource( 2 )
+text = "frames PEr Second"
+autowrap = true
+
+[node name="Control" type="Control" parent="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer2"]
+margin_top = 39.0
+margin_right = 214.0
+margin_bottom = 69.0
+rect_min_size = Vector2( 0, 30 )
+
+[node name="TextureProgress" type="TextureProgress" parent="GifPopup/PopupFront/VBoxContainer"]
+visible = false
+margin_top = 184.0
+margin_right = 432.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 16 )
+size_flags_horizontal = 3
+texture_under = ExtResource( 6 )
+texture_progress = ExtResource( 7 )
+nine_patch_stretch = true
+stretch_margin_left = 4
+stretch_margin_top = 4
+stretch_margin_right = 4
+stretch_margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GifPopup/PopupFront/VBoxContainer"]
+margin_top = 204.0
+margin_right = 432.0
+margin_bottom = 220.0
+
+[node name="CancelButton" type="Button" parent="GifPopup/PopupFront/VBoxContainer/HBoxContainer"]
+margin_right = 214.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "cancel"
+
+[node name="ExportButton" type="Button" parent="GifPopup/PopupFront/VBoxContainer/HBoxContainer"]
+margin_left = 218.0
+margin_right = 432.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+text = "export"
+
+[node name="Panel" type="ColorRect" parent="."]
+visible = false
+anchor_bottom = 1.0
+margin_left = 297.0
+margin_right = 512.0
+margin_bottom = -100.0
+rect_min_size = Vector2( 200, 0 )
+color = Color( 0.172549, 0.207843, 0.301961, 1 )
+
+[node name="PickerExit" type="Button" parent="Panel"]
+margin_left = 0.945328
+margin_top = 1.64743
+margin_right = 16.9453
+margin_bottom = 18.6474
+theme = ExtResource( 2 )
+text = "x"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorPicker" type="ColorPicker" parent="Panel"]
+margin_left = 28.2202
+margin_top = 11.2113
+margin_right = 408.22
+margin_bottom = 386.211
+rect_scale = Vector2( 0.5, 0.5 )
+theme = ExtResource( 2 )
+edit_alpha = false
+presets_enabled = false
+presets_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="item_selected" from="Settings/VBoxContainer/OptionButton" to="." method="_on_OptionButton_item_selected"]
+[connection signal="text_changed" from="Settings/VBoxContainer/Seed/SeedText" to="." method="_on_LineEdit_text_changed"]
+[connection signal="pressed" from="Settings/VBoxContainer/Seed/Button" to="." method="_on_Button_pressed"]
+[connection signal="value_changed" from="Settings/VBoxContainer/SliderPixels" to="." method="_on_SliderPixels_value_changed"]
+[connection signal="text_changed" from="Settings/VBoxContainer/InputPixels" to="." method="_on_InputPixels_text_changed"]
+[connection signal="value_changed" from="Settings/VBoxContainer/SliderRotation" to="." method="_on_SliderRotation_value_changed"]
+[connection signal="pressed" from="Settings/VBoxContainer/HBoxContainer2/ShouldDither" to="." method="_on_ShouldDither_pressed"]
+[connection signal="pressed" from="Settings/VBoxContainer/HBoxContainer/RandomizeColors" to="." method="_on_RandomizeColors_pressed"]
+[connection signal="pressed" from="Settings/VBoxContainer/HBoxContainer/ResetColors" to="." method="_on_ResetColors_pressed"]
+[connection signal="pressed" from="Settings/VBoxContainer/ExportPNG" to="." method="_on_ExportPNG_pressed"]
+[connection signal="pressed" from="Settings/VBoxContainer/ExportGIF" to="." method="_on_ExportGIF_pressed"]
+[connection signal="pressed" from="Settings/VBoxContainer/ExportSpriteSheet" to="." method="_on_ExportSpriteSheet_pressed"]
+[connection signal="gui_input" from="Control" to="." method="_on_Control_gui_input"]
+[connection signal="value_changed" from="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer/WidthFrames" to="Popup" method="_on_WidthFrames_value_changed"]
+[connection signal="value_changed" from="Popup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer/HeightFrames" to="Popup" method="_on_HeightFrames_value_changed"]
+[connection signal="pressed" from="Popup/PopupFront/VBoxContainer/HBoxContainer/CancelButton" to="Popup" method="_on_CancelButton_pressed"]
+[connection signal="pressed" from="Popup/PopupFront/VBoxContainer/HBoxContainer/ExportButton" to="Popup" method="_on_ExportButton_pressed"]
+[connection signal="cancel_gif" from="GifPopup" to="." method="_on_GifPopup_cancel_gif"]
+[connection signal="value_changed" from="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer/GifFrameCount" to="GifPopup" method="_on_GifFrameCount_value_changed"]
+[connection signal="value_changed" from="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer/GifTime" to="GifPopup" method="_on_GifTime_value_changed"]
+[connection signal="value_changed" from="GifPopup/PopupFront/VBoxContainer/SpritesheetSettings/VBoxContainer/FrameDelay" to="GifPopup" method="_on_FrameDelay_value_changed"]
+[connection signal="pressed" from="GifPopup/PopupFront/VBoxContainer/HBoxContainer/CancelButton" to="GifPopup" method="_on_CancelButton_pressed"]
+[connection signal="pressed" from="GifPopup/PopupFront/VBoxContainer/HBoxContainer/ExportButton" to="GifPopup" method="_on_ExportButton_pressed"]
+[connection signal="pressed" from="Panel/PickerExit" to="." method="_on_PickerExit_pressed"]
