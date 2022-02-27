@@ -24,7 +24,7 @@ func _ready():
 	
 	# some examples of how you could use it.
 #	_create_planet(planet_types.TerranWet, export_mode.IMG, 34207432, 200, PI * 0.5, Vector2(0.75,0.75), true, {})
-#	_create_planet(planet_types.TerranWet, export_mode.SPRITESHEET, 34207432, 200, PI * 0.5, Vector2(0.75,0.75), true, {"frames_w": 20, "frames_h": 5})
+#	_create_planet(planet_types.TerranWet, export_mode.SPRITESHEET, 34207432, 200, PI * 0.5, Vector2(0.75,0.75), true, {"frames_w": 20, "frames_h": 5, "pixel_margin": 0})
 #	_create_planet(planet_types.TerranWet, export_mode.GIF, 34207432, 100, PI * 0.5, Vector2(0.75,0.75), true, {"frames": 300, "length": 5})
 
 
@@ -40,7 +40,7 @@ func _ready():
 # dither (bool) - whether or not to dither in image.
 # colors (PoolColorArray) - colorscheme that will be used for planet. Leave empty for random
 # export_options (Dictionary) - options for either spritesheet or gif, containing follow info:
-# { "frames_w": int, "frames_h": int} for spritesheets
+# { "frames_w": int, "frames_h": int, "pixel_margin": int} for spritesheets
 # { "frames": int, "length": float} for gifs (length being length of gif in seconds).
 func _create_planet(type, mode = export_mode.NONE, sd = 0, pixels = 100, rotation = 0, light_origin = Vector2(0.4,0.4),
  dither = true, export_options = {}, colors = PoolColorArray()):
@@ -67,6 +67,6 @@ func _create_planet(type, mode = export_mode.NONE, sd = 0, pixels = 100, rotatio
 		export_mode.IMG:
 			gui._export_img()
 		export_mode.SPRITESHEET:
-			gui.export_spritesheet_no_bar(Vector2(export_options.frames_w, export_options.frames_h))
+			gui.export_spritesheet_no_bar(Vector2(export_options.frames_w, export_options.frames_h), export_options.pixel_margin)
 		export_mode.GIF:
 			gui.export_gif_no_bar(export_options.frames, float(export_options.length) / export_options.frames)

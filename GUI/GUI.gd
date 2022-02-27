@@ -99,11 +99,10 @@ func _create_new_planet(type):
 	viewport.size = Vector2(pixels, pixels) * new_p.relative_scale
 	
 	# some hardcoded values that look good in the GUI
-	match new_p.relative_scale:
+	match new_p.gui_zoom:
 		1.0:
 			viewport_tex.rect_position = Vector2(50,50)
 			viewport_tex.rect_size = Vector2(200,200)
-##			viewport_tex.rect_scale = Vector2(2.0,2.0)
 		2.0:
 			viewport_tex.rect_position = Vector2(25,25)
 			viewport_tex.rect_size = Vector2(250,250)
@@ -167,12 +166,14 @@ func _export_img():
 	
 	save_image(image)
 
-func export_spritesheet(sheet_size, progressbar):
+func export_spritesheet(sheet_size, progressbar, pixel_margin = 0.0):
 	var planet = viewport_planet.get_child(0)
 	var sheet = Image.new()
 	progressbar.max_value = sheet_size.x * sheet_size.y
 	
-	sheet.create(pixels * sheet_size.x * planet.relative_scale, pixels * sheet_size.y * planet.relative_scale, false, Image.FORMAT_RGBA8)
+	sheet.create(pixels * sheet_size.x * planet.relative_scale + sheet_size.x*pixel_margin + pixel_margin,
+				pixels * sheet_size.y * planet.relative_scale + sheet_size.y*pixel_margin + pixel_margin,
+				false, Image.FORMAT_RGBA8)
 	planet.override_time = true
 	
 	var index = 0
@@ -186,7 +187,7 @@ func export_spritesheet(sheet_size, progressbar):
 				var source_xy = 0
 				var source_size = pixels*planet.relative_scale
 				var source_rect = Rect2(source_xy, source_xy,source_size,source_size)
-				var destination = Vector2(x - 1,y) * pixels * planet.relative_scale
+				var destination = Vector2(x - 1,y) * pixels * planet.relative_scale + Vector2(x * pixel_margin, (y+1) * pixel_margin)
 				sheet.blit_rect(image, source_rect, destination)
 
 			index +=1
@@ -197,11 +198,13 @@ func export_spritesheet(sheet_size, progressbar):
 	save_image(sheet)
 	$Popup.visible = false
 
-func export_spritesheet_no_bar(sheet_size):
+func export_spritesheet_no_bar(sheet_size, pixel_margin = 0.0):
 	var planet = viewport_planet.get_child(0)
 	var sheet = Image.new()
 	
-	sheet.create(pixels * sheet_size.x * planet.relative_scale, pixels * sheet_size.y * planet.relative_scale, false, Image.FORMAT_RGBA8)
+	sheet.create(pixels * sheet_size.x * planet.relative_scale + sheet_size.x*pixel_margin + pixel_margin,
+		pixels * sheet_size.y * planet.relative_scale + sheet_size.y*pixel_margin + pixel_margin,
+		false, Image.FORMAT_RGBA8)
 	planet.override_time = true
 	
 	var index = 0
@@ -215,7 +218,7 @@ func export_spritesheet_no_bar(sheet_size):
 				var source_xy = 0
 				var source_size = pixels*planet.relative_scale
 				var source_rect = Rect2(source_xy, source_xy,source_size,source_size)
-				var destination = Vector2(x - 1,y) * pixels * planet.relative_scale
+				var destination = Vector2(x - 1,y) * pixels * planet.relative_scale + Vector2(x * pixel_margin, (y+1) * pixel_margin)
 				sheet.blit_rect(image, source_rect, destination)
 
 			index +=1
@@ -225,8 +228,7 @@ func export_spritesheet_no_bar(sheet_size):
 
 func save_image(img):
 	if OS.get_name() == "HTML5" and OS.has_feature('JavaScript'):
-		var filesaver = get_tree().root.get_node("/root/HTML5File")
-		filesaver.save_image(img, String(sd))
+		JavaScript.download_buffer(img.save_png_to_buffer(), String(sd)+".png", "image/png")
 	else:
 		if OS.get_name() == "OSX":
 			img.save_png("user://%s.png"%String(sd))
@@ -245,7 +247,6 @@ func _close_picker():
 	$Panel.visible = false
 	for b in colorholder.get_children():
 		b.is_active = false
-
 
 func _on_RandomizeColors_pressed():
 	_randomize_colors()
@@ -319,9 +320,8 @@ func export_gif(frames, frame_delay, progressbar):
 		file.store_buffer(exporter.export_file_data())
 		file.close()
 	else:
-		var fileName = String(sd)
 		var data = Array(exporter.export_file_data())
-		JavaScript.eval("downloadGif('%s', %s);" % [fileName, str(data)], true)
+		JavaScript.download_buffer(data, String(sd)+".gif", "image/gif")
 
 	planet.override_time = false
 	$GifPopup.visible = false
@@ -360,9 +360,8 @@ func export_gif_no_bar(frames, frame_delay):
 		file.store_buffer(exporter.export_file_data())
 		file.close()
 	else:
-		var fileName = String(sd)
 		var data = Array(exporter.export_file_data())
-		JavaScript.eval("downloadGif('%s', %s);" % [fileName, str(data)], true)
+		JavaScript.download_buffer(data, String(sd)+".gif", "image/gif")
 
 	planet.override_time = false
 
@@ -383,6 +382,5 @@ func _set_pixels(pix):
 	
 	p.rect_position = pixels * 0.5 * (p.relative_scale -1) * Vector2(1,1)
 
-	var scl = p.relative_scale
 	yield(get_tree(), "idle_frame")
-	viewport.size = Vector2(pixels, pixels) * scl
+	viewport.size = Vector2(pixels, pixels) * p.relative_scale

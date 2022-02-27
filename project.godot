@@ -21,7 +21,6 @@ config/icon="res://icon.png"
 [autoload]
 
 HTML5File="*res://addons/HTML5FileExchange/HTML5FileExchange.gd"
-Api="*res://API.gd"
 
 [display]
 
