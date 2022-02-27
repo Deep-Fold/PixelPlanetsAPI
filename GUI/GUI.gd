@@ -43,6 +43,7 @@ func _ready():
 
 	_seed_random()
 	_create_new_planet(planets["Terran Wet"])
+	
 #	yield(get_tree(), "idle_frame")
 #	viewport.size = Vector2(pixels, pixels)
 
