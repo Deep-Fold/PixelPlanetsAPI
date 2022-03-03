@@ -22,7 +22,7 @@ shader_param/OCTAVES = 4
 shader_param/seed = 1.012
 shader_param/time = 0.0
 shader_param/should_dither = true
-shader_param/should_pixelize = true
+shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
 
@@ -38,7 +38,7 @@ shader_param/color2 = Color( 0.227451, 0.247059, 0.368627, 1 )
 shader_param/size = 5.0
 shader_param/seed = 4.517
 shader_param/time = 0.0
-shader_param/should_pixelize = true
+shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
 

@@ -23,7 +23,7 @@ shader_param/OCTAVES = 3
 shader_param/seed = 1.551
 shader_param/time = 0.0
 shader_param/should_dither = true
-shader_param/should_pixelize = true
+shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
 
@@ -39,7 +39,7 @@ shader_param/color2 = Color( 0.239216, 0.160784, 0.211765, 1 )
 shader_param/size = 3.5
 shader_param/seed = 1.561
 shader_param/time = 0.0
-shader_param/should_pixelize = true
+shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
 
@@ -52,7 +52,7 @@ shader_param/time_speed = 0.2
 shader_param/light_border_1 = 0.019
 shader_param/light_border_2 = 0.036
 shader_param/river_cutoff = 0.579
-shader_param/should_pixelize = true
+shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
 shader_param/color1 = Color( 1, 0.537255, 0.2, 1 )

@@ -1,0 +1,149 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://PlanetsUntransformed/MouseExample.gd" type="Script" id=1]
+[ext_resource path="res://PlanetsUntransformed/GasPlanet/GasPlanet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://GUI/Theme.tres" type="Theme" id=3]
+[ext_resource path="res://PlanetsUntransformed/GUI.gd" type="Script" id=4]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform vec2 offset = vec2(0.0);
+
+
+float rand(vec2 coord) {
+	return fract(sin(dot(coord.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+vec2 rotate(vec2 coord, float angle){
+	coord -= 0.5;
+	coord *= mat2(vec2(cos(angle),-sin(angle)),vec2(sin(angle),cos(angle)));
+	return coord + 0.5;
+}
+
+void fragment() {
+	vec2 uv = rotate(UV, TIME * 0.2);
+
+	vec4 col = vec4(1.0) + rand(UV + vec2(TIME*0.0000001,0.0)) * 0.03;
+	
+	col = col* vec4(
+		abs(sin(uv.x * cos(offset.x)+ TIME * 0.105)),
+		abs(sin((cos(uv.x + uv.y) + cos(offset.x + offset.y) + TIME * 0.059))) ,
+		abs(cos(uv.y * sin(offset.y) + TIME * 0.0253)) ,
+		1.0);
+
+	COLOR = col;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/offset = Vector2( 0, 0 )
+
+[node name="Control" type="Control"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Light" type="ColorRect" parent="Background"]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dark" type="ColorRect" parent="Background"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.796078 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlanetHolder" type="Control" parent="."]
+margin_top = 15.0
+margin_right = 40.0
+margin_bottom = 55.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" parent="PlanetHolder" instance=ExtResource( 2 )]
+margin_right = 0.0
+margin_bottom = 0.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
+zoom = Vector2( 0.39, 0.39 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="GUI" type="CanvasLayer" parent="."]
+script = ExtResource( 4 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 448.0
+margin_bottom = 34.0
+mouse_filter = 0
+theme = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="GUI/HBoxContainer"]
+margin_top = 4.0
+margin_right = 56.0
+margin_bottom = 20.0
+mouse_filter = 0
+text = "seed:"
+
+[node name="Seed" type="LineEdit" parent="GUI/HBoxContainer"]
+margin_left = 60.0
+margin_right = 220.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 160, 0 )
+
+[node name="RandSeedButton" type="Button" parent="GUI/HBoxContainer"]
+margin_left = 224.0
+margin_right = 282.0
+margin_bottom = 24.0
+text = "rand"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="GUI/HBoxContainer"]
+margin_left = 286.0
+margin_right = 296.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 10, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="GUI/HBoxContainer"]
+margin_left = 300.0
+margin_top = 4.0
+margin_right = 359.0
+margin_bottom = 20.0
+mouse_filter = 0
+text = "type:"
+
+[node name="OptionButton" type="OptionButton" parent="GUI/HBoxContainer"]
+margin_left = 363.0
+margin_right = 377.0
+margin_bottom = 24.0
+
+[connection signal="make_planet" from="GUI" to="." method="_on_GUI_make_planet"]
+[connection signal="text_changed" from="GUI/HBoxContainer/Seed" to="." method="_on_Seed_text_changed"]
+[connection signal="pressed" from="GUI/HBoxContainer/RandSeedButton" to="." method="_on_RandSeedButton_pressed"]
+[connection signal="item_selected" from="GUI/HBoxContainer/OptionButton" to="GUI" method="_on_OptionButton_item_selected"]
+
+[editable path="PlanetHolder/Control"]

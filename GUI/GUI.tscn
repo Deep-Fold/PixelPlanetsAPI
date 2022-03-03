@@ -786,10 +786,10 @@ __meta__ = {
 }
 
 [node name="ColorPicker" type="ColorPicker" parent="Panel"]
-margin_left = 24.3103
-margin_top = 6.94784
-margin_right = 404.31
-margin_bottom = 381.948
+margin_left = 32.3103
+margin_top = 14.9478
+margin_right = 412.31
+margin_bottom = 389.948
 rect_scale = Vector2( 0.5, 0.5 )
 theme = ExtResource( 2 )
 presets_enabled = false

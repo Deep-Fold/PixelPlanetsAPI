@@ -15,12 +15,8 @@ _global_script_class_icons={
 [application]
 
 config/name="PixelPlanets"
-run/main_scene="res://GUI/GUI.tscn"
+run/main_scene="res://PlanetsUntransformed/MouseExample.tscn"
 config/icon="res://icon.png"
-
-[autoload]
-
-HTML5File="*res://addons/HTML5FileExchange/HTML5FileExchange.gd"
 
 [display]
 

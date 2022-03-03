@@ -1,7 +1,7 @@
 shader_type canvas_item;
 render_mode blend_mix;
 
-uniform float pixels : hint_range(10,100);
+uniform float pixels;
 uniform float cloud_cover : hint_range(0.0, 1.0);
 uniform vec2 light_origin = vec2(0.39, 0.39);
 uniform float time_speed : hint_range(-1.0, 1.0) = 0.2;
