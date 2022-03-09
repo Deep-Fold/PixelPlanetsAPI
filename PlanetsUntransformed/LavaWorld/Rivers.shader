@@ -11,6 +11,7 @@ uniform float river_cutoff : hint_range(0.0, 1.0);
 uniform bool should_pixelize = true;
 uniform vec2 offset;
 uniform float zoom = 1.0;
+uniform vec2 zoom_point = vec2(1.0, 0.5);
 
 uniform vec4 color1 : hint_color;
 uniform vec4 color2 : hint_color;
@@ -72,7 +73,10 @@ void fragment() {
 	if (should_pixelize) {
 		uv = floor(uv*pixels)/pixels;
 	}
+	
+	uv -= zoom_point;
 	uv *= zoom;
+	uv += zoom_point;
 	
 	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
 	

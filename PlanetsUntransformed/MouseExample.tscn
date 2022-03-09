@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://PlanetsUntransformed/MouseExample.gd" type="Script" id=1]
-[ext_resource path="res://PlanetsUntransformed/GasPlanet/GasPlanet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://PlanetsUntransformed/Rivers/Rivers.tscn" type="PackedScene" id=2]
 [ext_resource path="res://GUI/Theme.tres" type="Theme" id=3]
 [ext_resource path="res://PlanetsUntransformed/GUI.gd" type="Script" id=4]
 
@@ -73,8 +73,6 @@ __meta__ = {
 }
 
 [node name="Control" parent="PlanetHolder" instance=ExtResource( 2 )]
-margin_right = 0.0
-margin_bottom = 0.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
@@ -145,5 +143,3 @@ margin_bottom = 24.0
 [connection signal="text_changed" from="GUI/HBoxContainer/Seed" to="." method="_on_Seed_text_changed"]
 [connection signal="pressed" from="GUI/HBoxContainer/RandSeedButton" to="." method="_on_RandSeedButton_pressed"]
 [connection signal="item_selected" from="GUI/HBoxContainer/OptionButton" to="GUI" method="_on_OptionButton_item_selected"]
-
-[editable path="PlanetHolder/Control"]

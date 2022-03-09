@@ -10,7 +10,7 @@ shader = ExtResource( 3 )
 shader_param/pixels = 100.0
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.25, 0.25 )
-shader_param/time_speed = 0.4
+shader_param/time_speed = 0.0
 shader_param/dither_size = 2.0
 shader_param/light_border_1 = 0.615
 shader_param/light_border_2 = 0.729
@@ -25,13 +25,14 @@ shader_param/should_dither = true
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
 shader_param/pixels = 87.419
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.25, 0.25 )
-shader_param/time_speed = 0.001
+shader_param/time_speed = 0.0
 shader_param/light_border = 0.465
 shader_param/color1 = Color( 0.298039, 0.407843, 0.521569, 1 )
 shader_param/color2 = Color( 0.227451, 0.247059, 0.368627, 1 )
@@ -41,6 +42,7 @@ shader_param/time = 0.0
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 
 [node name="NoAtmosphere" instance=ExtResource( 1 )]
 margin_right = -412.0

@@ -15,6 +15,7 @@ uniform bool should_dither = true;
 uniform bool should_pixelize = true;
 uniform vec2 offset;
 uniform float zoom = 1.0;
+uniform vec2 zoom_point = vec2(1.0, 0.5);
 
 uniform sampler2D colorscheme;
 uniform sampler2D dark_colorscheme;
@@ -101,7 +102,10 @@ void fragment() {
 		uv = floor(uv*pixels)/pixels;
 	}
 	bool dith = dither(uv, UV);
+	
+	uv -= zoom_point;
 	uv *= zoom;
+	uv += zoom_point;
 	
 	float light_d = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
 	

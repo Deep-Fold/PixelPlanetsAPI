@@ -23,7 +23,11 @@ func set_custom_time(_t):
 	pass
 
 func get_multiplier(mat):
-	return (round(mat.get_shader_param("size")) * 2.0) / mat.get_shader_param("time_speed")
+	var time_speed = mat.get_shader_param("time_speed")
+	
+	if time_speed > 0:
+		return (round(mat.get_shader_param("size")) * 2.0) / mat.get_shader_param("time_speed")
+	return 0
 	
 func _process(delta):
 	time += delta	

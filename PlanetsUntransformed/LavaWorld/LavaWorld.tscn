@@ -11,7 +11,7 @@ shader = ExtResource( 3 )
 shader_param/pixels = 100.0
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.3, 0.3 )
-shader_param/time_speed = 0.2
+shader_param/time_speed = 0.0
 shader_param/dither_size = 2.0
 shader_param/light_border_1 = 0.4
 shader_param/light_border_2 = 0.6
@@ -26,13 +26,14 @@ shader_param/should_dither = true
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
 shader_param/pixels = 100.0
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.3, 0.3 )
-shader_param/time_speed = 0.2
+shader_param/time_speed = 0.0
 shader_param/light_border = 0.4
 shader_param/color1 = Color( 0.321569, 0.2, 0.247059, 1 )
 shader_param/color2 = Color( 0.239216, 0.160784, 0.211765, 1 )
@@ -42,19 +43,21 @@ shader_param/time = 0.0
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 5 )
 shader_param/pixels = 100.0
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.3, 0.3 )
-shader_param/time_speed = 0.2
+shader_param/time_speed = 0.0
 shader_param/light_border_1 = 0.019
 shader_param/light_border_2 = 0.036
 shader_param/river_cutoff = 0.579
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 shader_param/color1 = Color( 1, 0.537255, 0.2, 1 )
 shader_param/color2 = Color( 0.901961, 0.270588, 0.223529, 1 )
 shader_param/color3 = Color( 0.678431, 0.184314, 0.270588, 1 )

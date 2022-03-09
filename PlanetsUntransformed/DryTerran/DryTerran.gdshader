@@ -17,6 +17,7 @@ uniform bool should_dither = true;
 uniform bool should_pixelize = true;
 uniform vec2 offset;
 uniform float zoom = 1.0;
+uniform vec2 zoom_point = vec2(1.0, 0.5);
 
 float rand(vec2 coord) {
 	// land has to be tiled
@@ -78,8 +79,11 @@ void fragment() {
 		uv = floor(uv*pixels)/pixels;
 	}
 	bool dith = dither(uv, UV);
+	
+	uv -= zoom_point;
 	uv *= zoom;
-
+	uv += zoom_point;
+	
 	// check distance distance to light
 	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
 	

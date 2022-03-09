@@ -19,6 +19,7 @@ uniform bool should_dither = true;
 uniform bool should_pixelize = true;
 uniform vec2 offset;
 uniform float zoom = 1.0;
+uniform vec2 zoom_point = vec2(1.0, 0.5);
 
 float rand(vec2 coord) {
 	coord = mod(coord, vec2(1.0,1.0)*round(size));
@@ -67,7 +68,10 @@ void fragment() {
 	if (should_pixelize) {
 		uv = floor(uv*pixels)/pixels;
 	}
+	
+	uv -= zoom_point;
 	uv *= zoom;
+	uv += zoom_point;
 	
 	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
 	

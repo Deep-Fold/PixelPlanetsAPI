@@ -20,21 +20,27 @@ func _physics_process(_delta):
 		var mouse_pos = get_global_mouse_position()
 		var diff = mouse_pos - prev_mouse
 		prev_mouse = mouse_pos
-		offset -= diff * 0.01
+		offset -= diff * 0.01 * pow(zoom, 1.0)
 
-		offset.x = clamp(offset.x, 0.0, ((1 / zoom) - 1) * 2.0)
-		offset.y = clamp(offset.y, 0.0, ((1 / zoom) - 1) * 1.0)
+		var x_constrain = 1.0 - zoom
+		var y_constrain = (1.0 - zoom) * 0.5
+		
+		offset.x = clamp(offset.x, -x_constrain, x_constrain)
+		offset.y = clamp(offset.y, -y_constrain, y_constrain)
 	
 	for c in control.get_children():
+		c.material.set_shader_param("zoom_point", offset  + Vector2(1.0, 0.5))
 		c.material.set_shader_param("offset", offset)
 		c.material.set_shader_param("zoom", zoom)
 
 func set_zoom(z):
-	var factor = zoom / z
 	zoom = z
 	
-	offset.x = clamp(offset.x, 0.0, ((1 / zoom) - 1) * 2.0)
-	offset.y = clamp(offset.y, 0.0, ((1 / zoom) - 1) * 1.0)
+	var x_constrain = 1.0 - zoom
+	var y_constrain = (1.0 - zoom) * 0.5
+	
+	offset.x = clamp(offset.x, -x_constrain, x_constrain)
+	offset.y = clamp(offset.y, -y_constrain, y_constrain)
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -45,14 +51,16 @@ func _input(event):
 			else:
 				mouse_pressed = false
 		if event.button_index == BUTTON_WHEEL_UP:
-			tween.interpolate_method(self, "set_zoom", zoom, max(zoom - 0.1, 0.2), 0.1, Tween.TRANS_LINEAR)
+			tween.interpolate_method(self, "set_zoom", zoom, max(zoom * 0.8, 0.01), 0.1, Tween.TRANS_LINEAR)
 			tween.start()
 		if event.button_index == BUTTON_WHEEL_DOWN:
-			tween.interpolate_method(self, "set_zoom", zoom, min(zoom + 0.1, 1.0), 0.1, Tween.TRANS_LINEAR)
+			tween.interpolate_method(self, "set_zoom", zoom, min(zoom * 1.2, 1.0), 0.1, Tween.TRANS_LINEAR)
 			tween.start()
 
 
 func _on_GUI_make_planet(p):
+	zoom = 1
+	offset = Vector2()
 	for c in holder.get_children():
 		c.queue_free()
 	
