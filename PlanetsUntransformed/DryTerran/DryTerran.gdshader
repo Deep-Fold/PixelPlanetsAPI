@@ -102,7 +102,7 @@ void fragment() {
 		d_light *= 0.9;
 	}
 	
-	float c = d_light*pow(f,0.8)*3.5; // change the magic nums here for different light strengths
+	float c = d_light*pow(f,0.8)*2.5; // change the magic nums here for different light strengths
 	
 	// apply dithering
 	if (should_pixelize && dith || !should_dither) {

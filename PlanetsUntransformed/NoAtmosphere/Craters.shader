@@ -5,7 +5,7 @@ uniform float pixels;
 uniform float rotation : hint_range(0.0, 6.28) = 0.0;
 uniform vec2 light_origin = vec2(0.39, 0.39);
 uniform float time_speed : hint_range(0.0, 1.0);
-uniform float light_border : hint_range(0.0, 1.0) = 0.4;
+uniform float light_border : hint_range(0.0, 2.0) = 0.4;
 uniform vec4 color1 : hint_color;
 uniform vec4 color2 : hint_color;
 uniform float size = 50.0;
@@ -64,7 +64,7 @@ void fragment() {
 	uv *= zoom;
 	uv += zoom_point;
 	
-	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
+	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin)) * light_border;
 	
 	uv = rotate(uv, rotation);
 		

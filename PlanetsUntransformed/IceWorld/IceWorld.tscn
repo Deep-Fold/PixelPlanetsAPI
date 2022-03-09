@@ -12,13 +12,13 @@ shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.3, 0.3 )
 shader_param/time_speed = 0.0
 shader_param/dither_size = 2.0
-shader_param/light_border_1 = 0.48
-shader_param/light_border_2 = 0.632
+shader_param/light_border_1 = 1.0
+shader_param/light_border_2 = 1.4
 shader_param/color1 = Color( 0.980392, 1, 1, 1 )
 shader_param/color2 = Color( 0.780392, 0.831373, 0.882353, 1 )
 shader_param/color3 = Color( 0.572549, 0.560784, 0.721569, 1 )
 shader_param/size = 8.0
-shader_param/OCTAVES = 2
+shader_param/OCTAVES = 5
 shader_param/seed = 1.036
 shader_param/time = 0.0
 shader_param/should_dither = true
@@ -35,12 +35,13 @@ uniform float pixels : hint_range(10,100);
 uniform float rotation : hint_range(0.0, 6.28) = 0.0;
 uniform vec2 light_origin = vec2(0.39, 0.39);
 uniform float time_speed : hint_range(-2.0, 3.0) = 0.2;
-uniform float light_border_1 : hint_range(0.0, 1.0) = 0.4;
-uniform float light_border_2 : hint_range(0.0, 1.0) = 0.5;
+uniform float light_border_1 : hint_range(0.0, 2.0) = 0.4;
+uniform float light_border_2 : hint_range(0.0, 2.0) = 0.5;
 uniform float lake_cutoff : hint_range(0.0, 1.0);
 uniform bool should_pixelize = true;
 uniform vec2 offset;
 uniform float zoom = 1.0;
+uniform vec2 zoom_point = vec2(1.0, 0.5);
 
 uniform vec4 color1 : hint_color;
 uniform vec4 color2 : hint_color;
@@ -102,7 +103,10 @@ void fragment() {
 	if (should_pixelize) {
 		uv = floor(uv*pixels)/pixels;
 	}
+	
+	uv -= zoom_point;
 	uv *= zoom;
+	uv += zoom_point;
 	
 	float d_light = distance(mod(uv, vec2(2.0, 1.0)), vec2(light_origin));
 	
@@ -137,17 +141,18 @@ shader_param/pixels = 100.0
 shader_param/rotation = 0.0
 shader_param/light_origin = Vector2( 0.3, 0.3 )
 shader_param/time_speed = 0.0
-shader_param/light_border_1 = 0.024
-shader_param/light_border_2 = 0.047
+shader_param/light_border_1 = 0.121
+shader_param/light_border_2 = 0.166
 shader_param/lake_cutoff = 0.55
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
+shader_param/zoom_point = Vector2( 1, 0.5 )
 shader_param/color1 = Color( 0.309804, 0.643137, 0.721569, 1 )
 shader_param/color2 = Color( 0.298039, 0.407843, 0.521569, 1 )
 shader_param/color3 = Color( 0.227451, 0.247059, 0.368627, 1 )
 shader_param/size = 10.0
-shader_param/OCTAVES = 3
+shader_param/OCTAVES = 6
 shader_param/seed = 1.14
 shader_param/time = 0.0
 
@@ -160,8 +165,8 @@ shader_param/light_origin = Vector2( 0.3, 0.3 )
 shader_param/time_speed = 0.01
 shader_param/stretch = 2.5
 shader_param/cloud_curve = 1.3
-shader_param/light_border_1 = 0.566
-shader_param/light_border_2 = 0.781
+shader_param/light_border_1 = 1.024
+shader_param/light_border_2 = 1.421
 shader_param/should_pixelize = false
 shader_param/offset = null
 shader_param/zoom = 1.0
